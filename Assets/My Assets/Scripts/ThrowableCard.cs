@@ -10,7 +10,7 @@ public class ThrowableCard : MonoBehaviour
 
     public void Throw(){
 
-        GameObject instance = Instantiate(cardPrefab, instantiatePosition.position, transform.rotation);
+        GameObject instance = Instantiate(cardPrefab, instantiatePosition.position, instantiatePosition.rotation);
 
         if (instance.TryGetComponent(out Rigidbody rigidbody)){
             
@@ -21,7 +21,7 @@ public class ThrowableCard : MonoBehaviour
             }
 
             float speed = 3f;
-            rigidbody.velocity = transform.forward * speed;
+            rigidbody.velocity = instantiatePosition.forward * speed;
         }
 
     }
