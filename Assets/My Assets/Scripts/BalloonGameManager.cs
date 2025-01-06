@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,15 +8,17 @@ public class BalloonGameManager : MonoBehaviour
     public UnityEvent<int> OnScoreChange = new();
     public UnityEvent OnGameEnd = new();
 
-    [SerializeField] private GameObject balloonPrefab;
+    [SerializeField] private GameObject[] balloonPrefabs;
     [SerializeField] private Transform balloonSpawnArea;
 
     private int score;
-    private int gameDurationSeconds = 10;
-    private float timeBetweenBalloons = 0.5f;
+    [SerializeField] private int gameDurationSeconds = 10;
+    [SerializeField] private float timeBetweenBalloons = 0.5f;
 
     private Coroutine BalloonSpawnCoroutine;
     private Coroutine GameTimerCoroutine;
+
+    private List<GameObject> balloonInstances = new();
 
     public void StartGame()
     {
@@ -27,7 +30,9 @@ public class BalloonGameManager : MonoBehaviour
     private void SpawnBalloon()
     {
         Vector3 spawnPosition = GetRandomPointInArea(balloonSpawnArea);
+        GameObject balloonPrefab = balloonPrefabs[Random.Range(0, balloonPrefabs.Length)];
         GameObject balloonInstance = Instantiate(balloonPrefab, spawnPosition, Quaternion.identity);
+        balloonInstances.Add(balloonInstance);
         if (balloonInstance.TryGetComponent(out Balloon balloon))
         {
             balloon.BalloonPoppedEvent.AddListener(OnBalloonPopped);
@@ -71,6 +76,14 @@ public class BalloonGameManager : MonoBehaviour
         {
             StopCoroutine(GameTimerCoroutine);
             GameTimerCoroutine = null;
+        }
+
+        int balloonsLeft = balloonInstances.Count;
+        for (int i = 0; i < balloonsLeft; i++)
+        {
+            GameObject balloon = balloonInstances[0];
+            balloonInstances.RemoveAt(0);
+            Destroy(balloon);
         }
 
         OnGameEnd.Invoke();

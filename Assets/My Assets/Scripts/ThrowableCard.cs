@@ -20,7 +20,7 @@ public class ThrowableCard : MonoBehaviour
 
             }
 
-            float speed = 3f;
+            float speed = 6f;
             rigidbody.velocity = instantiatePosition.forward * speed;
         }
 
